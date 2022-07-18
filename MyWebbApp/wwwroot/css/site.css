@@ -13,6 +13,8 @@ html {
   min-height: 100%;
 }
 
-body {
-  margin-bottom: 60px;
+html {
+    scroll-behavior:smooth;
+    scroll-padding-bottom:auto;
 }
+
