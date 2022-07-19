@@ -18,3 +18,9 @@ html {
     scroll-padding-bottom:auto;
 }
 
+footer {
+    position: relative;
+    height: 250px;
+    margin-bottom: -200px;
+}
+

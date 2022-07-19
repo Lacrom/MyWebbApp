@@ -20,9 +20,6 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-white" asp-area="" asp-page="/Index">Home</a>
-                        </li>
-                        <li class="nav-item">
                             <a class="nav-link text-white" asp-area="" asp-page="/Myprojects">My projects</a>
                         </li>
                         <li class="nav-item">
@@ -30,6 +27,10 @@
                         </li>
                     </ul>
                 </div>
+                <form method="get" asp-action="Index">
+                <div class="mb-2"><input class="form-control" type="text" id="Searchid" placeholder="Search" value="@ViewData["searchdetails"]" name="searchString" /></div>
+                <div><input type="submit" src="~/loupe.png" value="submit" width="30" height="35" alt="Search" class="btn btn-primary"></div>
+                </form>
             </div>
         </nav>
     </header>
@@ -39,7 +40,7 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-center bg-dark">
+    <footer class="border-top footer text-center bg-dark" id="footer">
         <div class="container text-white py-4 py-lg-5">
         <ul class="list-inline">
                 <li class="list-inline-item me-4"><a class="link-light" href="https://github.com/Lacrom?tab=repositories">Github</a></li>
