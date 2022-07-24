@@ -25,12 +25,13 @@
                         <li class="nav-item">
                             <a class="nav-link text-white" asp-area="" asp-page="/MeMe">MeMe</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-area="" asp-page="/Admin_Pages/Index">Admin Index</a>
+                        </li>
                     </ul>
                 </div>
-                <form method="get" asp-action="Index">
                 <div class="mb-2"><input class="form-control" type="text" id="Searchid" placeholder="Search" value="@ViewData["searchdetails"]" name="searchString" /></div>
-                <div><input type="submit" src="~/loupe.png" value="submit" width="30" height="35" alt="Search" class="btn btn-primary"></div>
-                </form>
+                <div><input type="image" src="~/loupe.png" value="submit" width="55" height="75" alt="Search" class="btn btn-primary"></div>
             </div>
         </nav>
     </header>

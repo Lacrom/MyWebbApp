@@ -1,0 +1,46 @@
+﻿@page
+@model MyWebbApp.Pages.Admin_Pages.DeleteModel
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h1>Delete</h1>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>My_Projects_Model</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.My_Projects_Model.ProjectName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.My_Projects_Model.ProjectName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.My_Projects_Model.Technology)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.My_Projects_Model.Technology)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.My_Projects_Model.Timeofwork)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.My_Projects_Model.Timeofwork)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.My_Projects_Model.Delineation)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.My_Projects_Model.Delineation)
+        </dd>
+    </dl>
+    
+    <form method="post">
+        <input type="hidden" asp-for="My_Projects_Model.ID" />
+        <input type="submit" value="Delete" class="btn btn-danger" /> |
+        <a asp-page="./Index">Back to List</a>
+    </form>
+</div>
