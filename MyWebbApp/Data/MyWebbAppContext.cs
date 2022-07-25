@@ -15,5 +15,6 @@ namespace MyWebbApp.Data
         }
 
         public DbSet<MyWebbApp.Models.My_Projects_Model> My_Projects_Model { get; set; } = default!;
+        public DbSet<MyWebbApp.Models.Users> Users{ get; set; } = default!;
     }
 }

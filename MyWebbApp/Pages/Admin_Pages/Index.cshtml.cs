@@ -18,15 +18,20 @@ namespace MyWebbApp.Pages.Admin_Pages
         {
             _context = context;
         }
+        
 
         public IList<My_Projects_Model> My_Projects_Model { get;set; } = default!;
+        public IList<Users> Users { get; set; } = default!;
 
         public async Task OnGetAsync()
         {
             if (_context.My_Projects_Model != null)
             {
                 My_Projects_Model = await _context.My_Projects_Model.ToListAsync();
+                Users = await _context.Users.ToListAsync();
             }
         }
+        
+        
     }
 }

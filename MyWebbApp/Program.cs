@@ -9,6 +9,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddDbContext<MyWebbAppContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MyWebbAppContext") ?? throw new InvalidOperationException("Connection string 'MyWebbAppContext' not found.")));
 
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
