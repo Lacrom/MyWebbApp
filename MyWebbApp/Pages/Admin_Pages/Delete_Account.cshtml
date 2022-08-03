@@ -1,0 +1,40 @@
+﻿@page
+@model MyWebbApp.Pages.Admin_Pages.Delete_AccountModel
+
+@{
+    ViewData["Title"] = "Delete Account";
+}
+
+<h1>Delete</h1>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>My_Projects_Model</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Users.UserNick)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Users.UserNick)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Users.UserPassword )
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Users.UserPassword )
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Users.Echelon )
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Users.Echelon )
+        </dd>
+    </dl>
+    
+    <form method="post">
+        <input type="hidden" asp-for="Users.ID" />
+        <input type="submit" value="Delete" class="btn btn-danger" /> |
+        <a asp-page="./Index">Back to List</a>
+    </form>
+</div>

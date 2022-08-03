@@ -1,0 +1,50 @@
+﻿@page
+@model MyWebbApp.Pages.Admin_Pages.EditModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>My_Projects_Model</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="My_Projects_Model.ID" />
+            <div class="form-group">
+                <label asp-for="My_Projects_Model.ProjectName" class="control-label"></label>
+                <input asp-for="My_Projects_Model.ProjectName" class="form-control" />
+                <span asp-validation-for="My_Projects_Model.ProjectName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="My_Projects_Model.Technology" class="control-label"></label>
+                <input asp-for="My_Projects_Model.Technology" class="form-control" />
+                <span asp-validation-for="My_Projects_Model.Technology" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="My_Projects_Model.Timeofwork" class="control-label"></label>
+                <input asp-for="My_Projects_Model.Timeofwork" class="form-control" />
+                <span asp-validation-for="My_Projects_Model.Timeofwork" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="My_Projects_Model.Delineation" class="control-label"></label>
+                <input asp-for="My_Projects_Model.Delineation" class="form-control" />
+                <span asp-validation-for="My_Projects_Model.Delineation" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="./Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

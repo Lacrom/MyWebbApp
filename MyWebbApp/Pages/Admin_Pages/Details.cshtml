@@ -1,0 +1,43 @@
+﻿@page
+@model MyWebbApp.Pages.Admin_Pages.DetailsModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>My_Projects_Model</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.My_Projects_Model.ProjectName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.My_Projects_Model.ProjectName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.My_Projects_Model.Technology)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.My_Projects_Model.Technology)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.My_Projects_Model.Timeofwork)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.My_Projects_Model.Timeofwork)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.My_Projects_Model.Delineation)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.My_Projects_Model.Delineation)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-page="./Edit" asp-route-id="@Model.My_Projects_Model?.ID">Edit</a> |
+    <a asp-page="./Index">Back to List</a>
+</div>
