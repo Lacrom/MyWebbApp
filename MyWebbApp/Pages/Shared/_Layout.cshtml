@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/MyWebbApp.styles.css" asp-append-version="true" />
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="~/lib/microsoft/signalr/dist/browser/signalr.min.js"></script>
 </head>
 <body>
     <header>
@@ -20,6 +22,9 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
+                            <a class="nav-link text-white" asp-area="" asp-page="/F1_predictor">F1_prediction</a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link text-white" asp-area="" asp-page="/Myprojects">My projects</a>
                         </li>
                         <li class="nav-item">
@@ -28,9 +33,18 @@
                     </ul>
                 </div>
                 <form method="get" asp-action="Index">
-                <div class="mb-2"><input class="form-control" type="text" id="Searchid" placeholder="Search" value="@ViewData["searchdetails"]" name="searchString" /></div>
-                <div><input type="submit" src="~/loupe.png" value="submit" width="30" height="35" alt="Search" class="btn btn-primary"></div>
+                    <div class="mb-2 d-flex justify-content-end align-items-center">
+                        <div class="mr-2">
+                            <input class="form-control" type="text" id="Searchid" placeholder="Search" value="@ViewData["searchdetails"]" name="searchString" height="35" />
+                        </div>
+                        <div>
+                            <button type="submit" class="btn btn-primary form-control">
+                                <img src="~/loupe.png" alt="Search" width="30" height="35">
+                            </button>
+                        </div>
+                    </div>
                 </form>
+
             </div>
         </nav>
     </header>
@@ -47,13 +61,37 @@
                 <li class="list-inline-item me-4"><a class="link-light" asp-page="/Contact">Contact</a></li>
                 <li class="list-inline-item"><a class="link-light" asp-page="/Privacy">Privacy</a></li>
             </ul>
-            <p class="text-muted mb-0">Copyright © 2022 - LacromApp</p>
+            <p class="text-muted mb-0">Copyright © 2024 - LacromApp</p>
         </div>
     </footer>
+
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script>
+        var connection = new signalR.HubConnectionBuilder()
+            .withUrl("/searchHub") // Użyj URL huba SignalR
+            .configureLogging(signalR.LogLevel.Information)
+            .build();
+
+        connection.on("ReceiveSearchResults", function (results) {
+            // Obsługa otrzymanych wyników wyszukiwania
+            console.log(results);
+            // Aktualizacja widoku, np. wstawienie wyników do odpowiedniego diva
+        });
+
+        connection.start()
+        .then(function () {
+            console.log("SignalR connected with connection ID: " + connection.connectionId);
+        })
+        .catch(function (err) {
+            return console.error(err.toString());
+        });
+
+        // Inne funkcje obsługujące interakcje z użytkownikiem i wysyłające informacje do huba.
+    </script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

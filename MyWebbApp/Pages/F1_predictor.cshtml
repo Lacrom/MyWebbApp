@@ -1,0 +1,63 @@
+@page
+@model F1PredictorModel
+@{
+    ViewData["Title"] = "F1_prediction";
+}
+<head>
+<link rel="stylesheet" href="wwwrooot/assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+    <link rel="stylesheet" href="wwwrooot/assets/css/memescs.css">
+    <link rel="stylesheet" href="wwwrooot/assets/css/Navbar-Right-Links-Dark-icons.css">
+    <link rel="stylesheet" href="wwwrooot/assets/css/Projects-Grid-Horizontal-images.css">
+    <link rel="stylesheet" href="wwwrooot/assets/css/styles.css">
+</head>
+
+
+
+<body>
+    <div class="text-center">
+    <h1 class="display-4">Here is F1 predictor!</h1>
+    <p> I used 2 APIs, <a href="http://ergast.com/mrd/">ergastAPI</a> and <a href="https://docs.fastf1.dev/">FastF1API</a>.
+    Choose the best option for you and check results.<br> 
+    There is only one option available at this moment, because of readiness of models. <br>
+    These models were prepared for Methods of Artificial Intelligence course. </p>
+    </div>
+
+
+
+    <form class="text-center" method="post" asp-action="HandleRadioButton">
+        <div>
+            <input type="radio", id="RandomForestModelid" name="typeModel" value="type_of_model1"></input>
+            <label for="type_of_model1">Random Forest Model.</label>
+        </div>
+        <div>
+            <input type="radio", id="SVMid" name="typeModel" value="type_of_model2"></input>
+            <label for="type_of_model2">Support Vector Machine.</label>
+        </div>
+    </form>
+
+
+
+@section Scripts {
+    <script>
+        function handleRadioChange(radio)
+        {
+            if (radio.value === 'type_of_model1')
+            {
+                var type_of_model2 = document.querySelector('input[value="type_of_model2"]');
+
+                type_of_model2.disabled = radio.checked;
+            }
+            else if (radio.value === 'type_of_model2')
+            {
+                var type_of_model1 = document.querySelector('input[value="type_of_model1"]');
+
+                type_of_model1.disabled = radio.checked;
+            }
+        }
+    </script>
+    <script src="wwwroot/assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="wwwroot/assets/js/bs-init.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+}
+</body>

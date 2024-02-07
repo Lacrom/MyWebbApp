@@ -1,7 +1,11 @@
+//using SearchHub;
+
+//private readonly SearchHub _searchHub;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -21,5 +25,13 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.MapRazorPages();
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapRazorPages();
+    endpoints.MapHub<ChartHub>("/chartHub"); // Dodaj URL dla huba SignalR
+});
+
+
 
 app.Run();

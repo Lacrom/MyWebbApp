@@ -19,18 +19,18 @@ namespace MyWebbApp
 
         [HttpGet]
         // GET: HomeController
-        public async Task<ActionResult> Index(string searchString)
+        /*public async Task<ActionResult> Index(string searchString)
         {
             ViewData["searchdetails"] = searchString;
 
-            var searchquery = ; // You should add list of projects and list of memes and then try to searching by tags for example
+            //var searchquery = ; // You should add list of projects and list of memes and then try to searching by tags for example
             if(!String.IsNullOrEmpty(searchString))
             {
-                searchquery = searchquery.Where()
+                //searchquery = searchquery.Where();
             }
 
             return View(await );
-        }
+        }*/
 
         // GET: HomeController/Create
         public ActionResult Create()
@@ -94,5 +94,10 @@ namespace MyWebbApp
                 return View();
             }
         }
+
+
+        
     }
+
+
 }
