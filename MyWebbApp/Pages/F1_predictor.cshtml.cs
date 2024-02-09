@@ -7,16 +7,9 @@ namespace MyWebbApp.Pages
 {
     public class F1PredictorModel : PageModel
     {
-        private readonly IHubContext<ChartHub> _hubContext;
-
-        public F1PredictorModel(IHubContext<ChartHub> hubContext)
+        public void OnGet()
         {
-            _hubContext = hubContext;
-        }
-
-        public async Task OnGet()
-        {
-            await _hubContext.Clients.All.SendAsync("ReceiveChartData", "Nowe dane");
+            
         }
     }
 }

@@ -1,11 +1,8 @@
 using Microsoft.AspNetCore.SignalR;
 
-
+namespace MyWebbApp.Hubs;
 
 public class ChartHub : Hub
 {
-    public async Task SendChartData(string data)
-    {
-        await Clients.All.SendAsync("ReceiveChartData", data);
-    }
+    public const string Url = "/chart";
 }

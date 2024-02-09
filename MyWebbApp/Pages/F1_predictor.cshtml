@@ -3,14 +3,33 @@
 @{
     ViewData["Title"] = "F1_prediction";
 }
+@using MyWebbApp.Services
+@{
+    // Weryfikacja czy Buffer<Point> jest dostępny
+    var bufferAvailable = false;
+    Buffer<Point>? buffer = null;
+    try
+    {
+        buffer = (Buffer<Point>)HttpContext.RequestServices.GetService(typeof(Buffer<Point>));
+        bufferAvailable = true;
+    }
+    catch
+    {
+        // Jeśli wystąpi błąd, ustawiamy wartość bufferAvailable na false
+        bufferAvailable = false;
+    }
+}
+
+
 <head>
-<link rel="stylesheet" href="wwwrooot/assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="wwwrooot/assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
     <link rel="stylesheet" href="wwwrooot/assets/css/memescs.css">
     <link rel="stylesheet" href="wwwrooot/assets/css/Navbar-Right-Links-Dark-icons.css">
     <link rel="stylesheet" href="wwwrooot/assets/css/Projects-Grid-Horizontal-images.css">
     <link rel="stylesheet" href="wwwrooot/assets/css/styles.css">
 </head>
+
 
 
 
@@ -27,16 +46,53 @@
 
     <form class="text-center" method="post" asp-action="HandleRadioButton">
         <div>
-            <input type="radio", id="RandomForestModelid" name="typeModel" value="type_of_model1"></input>
+            <input type="radio" id="RandomForestModelid" name="typeModel" value="type_of_model1"></input>
             <label for="type_of_model1">Random Forest Model.</label>
         </div>
         <div>
-            <input type="radio", id="SVMid" name="typeModel" value="type_of_model2"></input>
+            <input type="radio" id="SVMid" name="typeModel" value="type_of_model2"></input>
             <label for="type_of_model2">Support Vector Machine.</label>
         </div>
     </form>
 
+    @if(bufferAvailable)
+    {
+    // Jeśli Buffer<Point> jest dostępny, renderujemy kod z wykorzystaniem danych z bufora
+    var labels = buffer.Select(x => x.Label);
+    var data = buffer.Select(x => x.Value);
 
+    <div>
+        <div style="width: 400px; height: 400px">
+            <canvas id="f1PredictionChart" width="400" height="400"></canvas>
+        </div>
+        <script id="data" type="application/json">
+            @Json.Serialize(
+                new
+                {
+                    labels,
+                    limit = buffer.MaxCapacity.GetValueOrDefault(10),
+                    url = "/chart",
+                    datasets = new object[]
+                    {
+                        new
+                        {
+                            label = "SignalR Dataset",
+                            data,
+                            fill = false,
+                            borderColor = "rgb(75, 192, 192)",
+                            tension = 0.1
+                        }
+                    }
+                })    
+        </script>
+    </div>
+    }
+    else
+    {
+        // Jeśli Buffer<Point> nie jest dostępny, możemy wyświetlić alternatywną treść lub komunikat o błędzie
+        <p>Błąd: Nie można uzyskać dostępu do bufora danych.</p>
+    }
+    
 
 @section Scripts {
     <script>
