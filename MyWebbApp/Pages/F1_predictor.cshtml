@@ -1,24 +1,9 @@
-@page
-@model F1PredictorModel
+@page 
+@model MyWebbApp.Pages.F1PredictorModel
 @{
     ViewData["Title"] = "F1_prediction";
 }
-@using MyWebbApp.Services
-@{
-    // Weryfikacja czy Buffer<Point> jest dostępny
-    var bufferAvailable = false;
-    Buffer<Point>? buffer = null;
-    try
-    {
-        buffer = (Buffer<Point>)HttpContext.RequestServices.GetService(typeof(Buffer<Point>));
-        bufferAvailable = true;
-    }
-    catch
-    {
-        // Jeśli wystąpi błąd, ustawiamy wartość bufferAvailable na false
-        bufferAvailable = false;
-    }
-}
+
 
 
 <head>
@@ -28,6 +13,7 @@
     <link rel="stylesheet" href="wwwrooot/assets/css/Navbar-Right-Links-Dark-icons.css">
     <link rel="stylesheet" href="wwwrooot/assets/css/Projects-Grid-Horizontal-images.css">
     <link rel="stylesheet" href="wwwrooot/assets/css/styles.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
 </head>
 
 
@@ -35,85 +21,77 @@
 
 <body>
     <div class="text-center">
-    <h1 class="display-4">Here is F1 predictor!</h1>
-    <p> I used 2 APIs, <a href="http://ergast.com/mrd/">ergastAPI</a> and <a href="https://docs.fastf1.dev/">FastF1API</a>.
-    Choose the best option for you and check results.<br> 
-    There is only one option available at this moment, because of readiness of models. <br>
-    These models were prepared for Methods of Artificial Intelligence course. </p>
-    </div>
-
-
-
-    <form class="text-center" method="post" asp-action="HandleRadioButton">
-        <div>
-            <input type="radio" id="RandomForestModelid" name="typeModel" value="type_of_model1"></input>
-            <label for="type_of_model1">Random Forest Model.</label>
-        </div>
-        <div>
-            <input type="radio" id="SVMid" name="typeModel" value="type_of_model2"></input>
-            <label for="type_of_model2">Support Vector Machine.</label>
-        </div>
-    </form>
-
-    @if(bufferAvailable)
-    {
-    // Jeśli Buffer<Point> jest dostępny, renderujemy kod z wykorzystaniem danych z bufora
-    var labels = buffer.Select(x => x.Label);
-    var data = buffer.Select(x => x.Value);
-
-    <div>
-        <div style="width: 400px; height: 400px">
-            <canvas id="f1PredictionChart" width="400" height="400"></canvas>
-        </div>
-        <script id="data" type="application/json">
-            @Json.Serialize(
-                new
+        <h1 class="display-4">Here is F1 predictor!</h1>
+        <p>
+            I used 2 APIs, <a href="http://ergast.com/mrd/">ergastAPI</a> and <a href="https://docs.fastf1.dev/">FastF1API</a>.
+            Choose the race of season 2023. <br>
+            The models used in project are methods of artificial intelligence SVC and RF.
+        </p>
+        <form method="post">
+            <label for="raceNumber">Select Race Number:</label>
+            <select asp-for="SelectedRaceNumber" id="raceNumber" name="SelectedRaceNumber" class="form-control">
+                @for (int i = 1; i <= 23; i++)
                 {
-                    labels,
-                    limit = buffer.MaxCapacity.GetValueOrDefault(10),
-                    url = "/chart",
-                    datasets = new object[]
+                    var selected = (Model.SelectedRaceNumber == i) ? "selected" : "";
+                    <option value="@i" selected="@selected">Race @i</option>
+                }
+            </select>
+            <button type="submit" class="btn btn-primary mt-2">Get Race Data</button>
+        </form>
+
+        @if (Model.RaceDataList != null && Model.RaceDataList.Count > 0)
+        {
+            <h3>Race Data for Race @Model.SelectedRaceNumber</h3>
+            <table class="table" id="raceTable">
+                <thead>
+                    <tr>
+                        <th>Driver</th>
+                        <th>Team</th>
+                        <th>Qualifying Position</th>
+                        <th>Race Prediction Rf</th>
+                        <th>Race Prediction SVC</th>
+                        <!-- Add more columns as needed -->
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var data in Model.RaceDataList)
                     {
-                        new
-                        {
-                            label = "SignalR Dataset",
-                            data,
-                            fill = false,
-                            borderColor = "rgb(75, 192, 192)",
-                            tension = 0.1
-                        }
+                        <tr>
+                            <td>@data.driver</td>
+                            <td>@data.team</td>
+                            <td>@data.position_quali</td>
+                            <td>@data.pred_pos_rf</td>
+                            <td>@data.pred_pos_svc</td>
+                            <!-- Add more cells as needed -->
+                        </tr>
                     }
-                })    
-        </script>
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p>No data available for the selected race.</p>
+        }
     </div>
-    }
-    else
-    {
-        // Jeśli Buffer<Point> nie jest dostępny, możemy wyświetlić alternatywną treść lub komunikat o błędzie
-        <p>Błąd: Nie można uzyskać dostępu do bufora danych.</p>
-    }
+
+
+
     
 
 @section Scripts {
-    <script>
-        function handleRadioChange(radio)
-        {
-            if (radio.value === 'type_of_model1')
-            {
-                var type_of_model2 = document.querySelector('input[value="type_of_model2"]');
-
-                type_of_model2.disabled = radio.checked;
-            }
-            else if (radio.value === 'type_of_model2')
-            {
-                var type_of_model1 = document.querySelector('input[value="type_of_model1"]');
-
-                type_of_model1.disabled = radio.checked;
-            }
-        }
-    </script>
+    
     <script src="wwwroot/assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="wwwroot/assets/js/bs-init.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+        <script>
+            $(document).ready(function () {
+                $('#raceTable').DataTable({
+                    "order": [[1, "asc"]], 
+                });
+            });
+        </script>
+
 }
 </body>

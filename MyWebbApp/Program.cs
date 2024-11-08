@@ -1,22 +1,21 @@
-using MyWebbApp.Hubs;
-using MyWebbApp.Services;
+using MyWebbApp;
+using MyWebbApp.Pages;
+using MyWebbApp.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
-builder.Services.AddSignalR();
+builder.Services.AddHttpClient<F1PredictorController>();
 
-builder.Services.AddSingleton(_ => {
-    var buffer = new Buffer<Point>(10);
-    // start with something that can grow
-    for (var i = 0; i < 7; i++) 
-        buffer.AddNewRandomPoint();
-
-    return buffer;
+// 1. Dodanie sesji do kontenera us³ug.
+builder.Services.AddDistributedMemoryCache(); // add cache
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // how long session will be alive
+    options.Cookie.HttpOnly = true; 
+    options.Cookie.IsEssential = true; 
 });
-
-builder.Services.AddHostedService<ChartValuesGenerator>();
 
 var app = builder.Build();
 
@@ -24,7 +23,6 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -33,12 +31,11 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+// 2. Dodanie middleware obs³uguj¹cego sesje.
+app.UseSession();
+
 app.UseAuthorization();
 
 app.MapRazorPages();
-app.MapHub<ChartHub>(ChartHub.Url);
-
-
-
 
 app.Run();
