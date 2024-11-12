@@ -20,13 +20,13 @@ public class F1PredictorController : ControllerBase
     }
 
     [HttpPost("GetRaceData")]
-    public async Task<List<RaceData>> GetRaceData(int raceNumber)
+    public async Task<List<RaceData>> GetRaceData(int raceNumber, int seasonNumber)
     {
-        var requestPayload = new { race_number = raceNumber };
+        var requestPayload = new { race_number = raceNumber, season_number = seasonNumber };
         var jsonContent = new StringContent(JsonSerializer.Serialize(requestPayload), Encoding.UTF8, "application/json");
 
         // Send POST request to the Flask API
-        var response = await _httpClient.PostAsync("http://127.0.0.1:5000/predict2023", jsonContent);
+        var response = await _httpClient.PostAsync("http://127.0.0.1:5000/predictF1results", jsonContent);
         response.EnsureSuccessStatusCode();
 
         // Deserialize the response to a list of RaceData

@@ -28,9 +28,17 @@
             The models used in project are methods of artificial intelligence SVC and RF.
         </p>
         <form method="post">
+            <label for="seasonNumber">Select Season:</label>
+            <select asp-for="SelectedSeasonNumber" id="seasonNumber" name="SelectedSeasonNumber" class="form-control">
+                @for (int i = 2023; i <= 2024; i++)
+                {
+                    var selected = (Model.SelectedSeasonNumber == i) ? "selected" : "";
+                    <option value="@i" selected="@selected">Season @i</option>
+                }
+            </select>
             <label for="raceNumber">Select Race Number:</label>
             <select asp-for="SelectedRaceNumber" id="raceNumber" name="SelectedRaceNumber" class="form-control">
-                @for (int i = 1; i <= 23; i++)
+                @for (int i = 1; i <= 24; i++)
                 {
                     var selected = (Model.SelectedRaceNumber == i) ? "selected" : "";
                     <option value="@i" selected="@selected">Race @i</option>
@@ -41,7 +49,7 @@
 
         @if (Model.RaceDataList != null && Model.RaceDataList.Count > 0)
         {
-            <h3>Race Data for Race @Model.SelectedRaceNumber</h3>
+            <h3>Race Data for Race @Model.SelectedRaceNumber in Season @Model.SelectedSeasonNumber</h3>
             <table class="table" id="raceTable">
                 <thead>
                     <tr>
@@ -87,8 +95,28 @@
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
         <script>
             $(document).ready(function () {
+                var constructor_colors = {
+                    'AlphaTauri': 'gray',
+                    'Visa Cash Rb': 'gray',
+                    'Alpine': 'blue',
+                    'Red Bull': 'navy',
+                    'Kick Sauber': 'lightgreen',
+                    'Alfa Romeo': 'maroon',
+                    'Williams': 'lightblue',
+                    'Aston Martin': 'darkgreen',
+                    'Mclaren': 'orange',
+                    'Mercedes': 'silver',
+                    'Ferrari': 'red',
+                    'Haas': 'black'
+                };
                 $('#raceTable').DataTable({
-                    "order": [[1, "asc"]], 
+                    "order": [[1, "asc"]],
+                    "createdRow": function (row, data, dataIndex) {
+                        var team = data[1]; 
+                        if (constructor_colors[team]) {
+                            $(row).css('background-color', constructor_colors[team]);
+                        }
+                    }
                 });
             });
         </script>

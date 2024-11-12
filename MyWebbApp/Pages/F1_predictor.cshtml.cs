@@ -16,6 +16,8 @@ namespace MyWebbApp.Pages
 
         [BindProperty]
         public int SelectedRaceNumber { get; set; }
+        [BindProperty]
+        public int SelectedSeasonNumber { get; set; }
 
         public F1PredictorModel(F1PredictorController f1PredictorController)
         {
@@ -30,7 +32,7 @@ namespace MyWebbApp.Pages
         public async Task<IActionResult> OnPostAsync()
         {
             // Fetch data for the selected race number
-            RaceDataList = await _f1PredictorController.GetRaceData(SelectedRaceNumber);
+            RaceDataList = await _f1PredictorController.GetRaceData(SelectedRaceNumber, SelectedSeasonNumber);
             return Page();
         }
 
