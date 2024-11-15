@@ -2,6 +2,10 @@ using MyWebbApp;
 using MyWebbApp.Pages;
 using MyWebbApp.Controllers;
 
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using MyWebbApp.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -16,6 +20,9 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true; 
     options.Cookie.IsEssential = true; 
 });
+builder.Services.AddDbContext<MyWebbAppContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("MyWebbAppContext") ?? throw new InvalidOperationException("Connection string 'MyWebbAppContext' not found.")));
+
 
 var app = builder.Build();
 
