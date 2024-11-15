@@ -27,25 +27,76 @@
             Choose the race of season 2023. <br>
             The models used in project are methods of artificial intelligence SVC and RF.
         </p>
-        <form method="post">
+        <form method="post" asp-page-handler="OnPostGetRaceDataAsync">
             <label for="seasonNumber">Select Season:</label>
-            <select asp-for="SelectedSeasonNumber" id="seasonNumber" name="SelectedSeasonNumber" class="form-control">
+            <select asp-for="SelectedSeasonNumber" id="seasonNumber" name="SelectedSeasonNumber" class="form-control" onchange="updateRaceOptions()">
                 @for (int i = 2023; i <= 2024; i++)
                 {
-                    var selected = (Model.SelectedSeasonNumber == i) ? "selected" : "";
-                    <option value="@i" selected="@selected">Season @i</option>
+                    if (Model.SelectedSeasonNumber == i)
+                    {
+                        <option value="@i" selected>Season @i</option>
+                    }
+                    else
+                    {
+                        <option value="@i">Season @i</option>
+                    }
                 }
             </select>
+
             <label for="raceNumber">Select Race Number:</label>
             <select asp-for="SelectedRaceNumber" id="raceNumber" name="SelectedRaceNumber" class="form-control">
-                @for (int i = 1; i <= 24; i++)
-                {
-                    var selected = (Model.SelectedRaceNumber == i) ? "selected" : "";
-                    <option value="@i" selected="@selected">Race @i</option>
+                @{
+                    int max_iter = Model.SelectedSeasonNumber == 2023 ? 22 : 24;
+                    for (int i = 1; i <= max_iter; i++)
+                    {
+                        if (Model.SelectedRaceNumber == i)
+                        {
+                            <option value="@i" selected>Race @i</option>
+                        }
+                        else
+                        {
+                            <option value="@i">Race @i</option>
+                        }
+                    }
                 }
             </select>
-            <button type="submit" class="btn btn-primary mt-2">Get Race Data</button>
+            @if (Model.IsLoadedData)
+            {
+                <button type="submit" class="btn btn-primary mt-2">Get Race Data</button>
+            }
         </form>
+        <form method="post" asp-page-handler="OnPostGetQualificationFormAsync">
+            <div class="form-check">
+                <input type="checkbox" asp-for="IsChecked" class="form-check" id="isChecked">
+                <label class="form-check-label" for="isChecked">Check me, if you want to provide data for models.</label>
+            </div>
+        </form>
+        @if (Model.IsChecked == true)
+        {
+            <div id="drivers-list">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Driver</th>
+                            <th>Team</th>
+                            <th>Qualification Result</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sortable-list">
+                        @foreach (var driver in Model.QualiResultsList)
+                        {
+                            <tr class="sortable-item" data-driver="@driver.driver">
+                                <td>@driver.driver</td>
+                                <td>@driver.team</td>
+                                <td>@driver.position_quali</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+
+
 
         @if (Model.RaceDataList != null && Model.RaceDataList.Count > 0)
         {
@@ -98,16 +149,16 @@
                 var constructor_colors = {
                     'AlphaTauri': 'gray',
                     'Visa Cash Rb': 'gray',
-                    'Alpine': 'blue',
-                    'Red Bull': 'navy',
+                    'Alpine': 'rgba(0, 0, 255, 0.5)',
+                    'Red Bull': 'rgba(0, 0, 128, 0.5)',
                     'Kick Sauber': 'lightgreen',
-                    'Alfa Romeo': 'maroon',
+                    'Alfa Romeo': 'rgba(128, 0, 0, 0.5)', 
                     'Williams': 'lightblue',
                     'Aston Martin': 'darkgreen',
-                    'Mclaren': 'orange',
+                    'McLaren': 'orange',
                     'Mercedes': 'silver',
                     'Ferrari': 'red',
-                    'Haas': 'black'
+                    'Haas': 'rgba(0, 0, 0, 0.75)'
                 };
                 $('#raceTable').DataTable({
                     "order": [[1, "asc"]],
@@ -119,7 +170,32 @@
                     }
                 });
             });
-        </script>
+            function updateRaceOptions() {
+                var seasonNumber = document.getElementById("seasonNumber").value;
+                var raceNumberSelect = document.getElementById("raceNumber");
 
+                var maxRaces = seasonNumber == 2023 ? 22 : 24;
+
+                raceNumberSelect.innerHTML = "";
+
+                for (var i = 1; i <= maxRaces; i++) {
+                    var option = document.createElement("option");
+                    option.value = i;
+                    option.text = "Race " + i;
+                    raceNumberSelect.appendChild(option);
+                }
+            }
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const sortable = new Sortable(document.getElementById('sortable-list'), {
+                    animation: 150,
+                    onEnd: function (evt) {
+                        console.log("Order updated:", evt.oldIndex, "->", evt.newIndex);
+                    }
+                });
+            });
+        </script>
 }
 </body>

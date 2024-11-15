@@ -11,31 +11,41 @@ namespace MyWebbApp.Pages
     public class F1PredictorModel : PageModel
     {
         private readonly F1PredictorController _f1PredictorController;
+        
 
         public List<RaceData> RaceDataList { get; set; } = new List<RaceData>();
+        public List<QualiResults> QualiResultsList { get; set; } = new List<QualiResults>();
 
         [BindProperty]
         public int SelectedRaceNumber { get; set; }
         [BindProperty]
         public int SelectedSeasonNumber { get; set; }
+        [BindProperty]
+        public bool IsLoadedData { get; set; }
+        [BindProperty]
+        public bool IsChecked { get; set; }
 
         public F1PredictorModel(F1PredictorController f1PredictorController)
         {
             _f1PredictorController = f1PredictorController;
         }
 
-        //public async Task OnGetAsync()
-        //{
-            // Default load data for race 1, or show an empty list
-        //}
-
-        public async Task<IActionResult> OnPostAsync()
+        
+        public async Task<IActionResult> OnPostGetRaceDataAsync()
         {
             // Fetch data for the selected race number
-            RaceDataList = await _f1PredictorController.GetRaceData(SelectedRaceNumber, SelectedSeasonNumber);
+            RaceDataList = await _f1PredictorController.GetRaceData(SelectedRaceNumber, SelectedSeasonNumber, IsChecked, QualiResultsList);
             return Page();
         }
 
-        
+        public async Task<IActionResult> OnPostGetQualificationFormAsync()
+        {
+            // Handle the logic for getting qualification
+            
+            QualiResultsList = await _f1PredictorController.GetDriversDataForm(SelectedRaceNumber, SelectedSeasonNumber);
+            IsLoadedData = true;
+            return Page();
+        }
+
     }
 }
