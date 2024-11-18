@@ -14,7 +14,7 @@ namespace MyWebbApp.Pages
         
 
         public List<RaceData> RaceDataList { get; set; } = new List<RaceData>();
-        public List<QualiResults> QualiResultsList { get; set; } = new List<QualiResults>();
+        public List<RaceData> QualiDataList { get; set; } = new List<RaceData>();
 
         [BindProperty]
         public int SelectedRaceNumber { get; set; }
@@ -24,25 +24,31 @@ namespace MyWebbApp.Pages
         public bool IsLoadedData { get; set; }
         [BindProperty]
         public bool IsChecked { get; set; }
+        [BindProperty]
+        public string QualiDataListJson { get; set; } = string.Empty; // Initialize to an empty string
 
         public F1PredictorModel(F1PredictorController f1PredictorController)
         {
             _f1PredictorController = f1PredictorController;
         }
 
-        
         public async Task<IActionResult> OnPostGetRaceDataAsync()
         {
-            // Fetch data for the selected race number
-            RaceDataList = await _f1PredictorController.GetRaceData(SelectedRaceNumber, SelectedSeasonNumber, IsChecked, QualiResultsList);
+            if (!string.IsNullOrEmpty(QualiDataListJson))
+            {
+                QualiDataList = JsonConvert.DeserializeObject<List<RaceData>>(QualiDataListJson) ?? new List<RaceData>();
+            }
+
+            RaceDataList = await _f1PredictorController.GetRaceData(SelectedRaceNumber, SelectedSeasonNumber, IsChecked, QualiDataList ?? new List<RaceData>());
             return Page();
         }
+
 
         public async Task<IActionResult> OnPostGetQualificationFormAsync()
         {
             // Handle the logic for getting qualification
             
-            QualiResultsList = await _f1PredictorController.GetDriversDataForm(SelectedRaceNumber, SelectedSeasonNumber);
+            QualiDataList = await _f1PredictorController.GetDriversDataForm(SelectedRaceNumber, SelectedSeasonNumber);
             IsLoadedData = true;
             return Page();
         }

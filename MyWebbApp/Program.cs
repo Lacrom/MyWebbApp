@@ -22,7 +22,8 @@ builder.Services.AddSession(options =>
 });
 builder.Services.AddDbContext<MyWebbAppContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MyWebbAppContext") ?? throw new InvalidOperationException("Connection string 'MyWebbAppContext' not found.")));
-
+builder.Services.AddDbContext<F1DriversContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("F1DriversContext") ?? throw new InvalidOperationException("Connection string 'F1DriversContext' not found.")));
 
 var app = builder.Build();
 

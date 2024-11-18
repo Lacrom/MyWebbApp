@@ -1,10 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using System.Net.Http;
-using System.Text.Json;
-using System.Threading.Tasks;
-using System.Collections.Generic;
 using System.Text;
-using System.Runtime.CompilerServices;
+using System.Text.Json;
 
 
 namespace MyWebbApp.Controllers;
@@ -21,10 +17,24 @@ public class F1PredictorController : ControllerBase
     }
 
     [HttpPost("GetRaceData")]
-    public async Task<List<RaceData>> GetRaceData(int raceNumber, int seasonNumber, bool checkedValue, List<QualiResults> QualiResultsList)
+    public async Task<List<RaceData>> GetRaceData(int raceNumber, int seasonNumber, bool checkedValue, List<RaceData> QualiDataList)
     {
-        
-        var requestPayload = new { race_number = raceNumber, season_number = seasonNumber, checked_Value = checkedValue, Qualification = QualiResultsList };
+        if (QualiDataList == null || !QualiDataList.Any())
+        {
+            Console.WriteLine("RaceDataList is empty or null!");
+        }
+        else
+        {
+            Console.WriteLine($"RaceDataList has {QualiDataList.Count} items.");
+        }
+
+        var requestPayload = new
+        {
+            race_number = raceNumber,
+            season_number = seasonNumber,
+            checked_Value = checkedValue,
+            Qualification = QualiDataList
+        };
         var jsonContent = new StringContent(JsonSerializer.Serialize(requestPayload), Encoding.UTF8, "application/json");
 
         // Send POST request to the Flask API
@@ -42,20 +52,20 @@ public class F1PredictorController : ControllerBase
     }
 
     [HttpPost("GetDriversDataForm")]
-    public async Task<List<QualiResults>> GetDriversDataForm(int raceNumber, int seasonNumber)
+    public async Task<List<RaceData>> GetDriversDataForm(int raceNumber, int seasonNumber)
     {
 
         var requestPayload = new { race_number = raceNumber, season_number = seasonNumber };
         var jsonContent = new StringContent(JsonSerializer.Serialize(requestPayload), Encoding.UTF8, "application/json");
 
         // Send POST request to the Flask API
-        var response = await _httpClient.PostAsync("http://127.0.0.1:5000/driverdata", jsonContent);
+        var response = await _httpClient.PostAsync("http://127.0.0.1:5000/getdriverdata", jsonContent);
         response.EnsureSuccessStatusCode();
 
         // Deserialize the response to a list of RaceData
         var responseData = await response.Content.ReadAsStringAsync();
-        var raceData = JsonSerializer.Deserialize<List<QualiResults>>(responseData);
-        return raceData ?? new List<QualiResults>();
+        var qualiData = JsonSerializer.Deserialize<List<RaceData>>(responseData);
+        return qualiData ?? new List<RaceData>();
 
         ///HttpContext.Session.SetString("RaceData", JsonSerializer.Serialize(raceData));
         // RedirectToAction("ShowRaceData");
@@ -93,7 +103,7 @@ public class RaceData : QualiResults
 {
     public int Id { get; set; }
     public int IdCon { get; set; }
-    public string? Idcircuit { get; set; }
+    public int Idcircuit { get; set; }
     public int is_home_race_constr { get; set; }
     public int is_home_race_driv { get; set; }
     public int position_constructors { get; set; }

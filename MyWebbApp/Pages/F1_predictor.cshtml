@@ -27,7 +27,7 @@
             Choose the race of season 2023. <br>
             The models used in project are methods of artificial intelligence SVC and RF.
         </p>
-        <form method="post" asp-page-handler="OnPostGetRaceDataAsync">
+        <form method="post" asp-page-handler="GetQualificationForm">
             <label for="seasonNumber">Select Season:</label>
             <select asp-for="SelectedSeasonNumber" id="seasonNumber" name="SelectedSeasonNumber" class="form-control" onchange="updateRaceOptions()">
                 @for (int i = 2023; i <= 2024; i++)
@@ -51,30 +51,36 @@
                     {
                         if (Model.SelectedRaceNumber == i)
                         {
-                            <option value="@i" selected>Race @i</option>
+                                    <option value="@i" selected>Race @i</option>
                         }
                         else
                         {
-                            <option value="@i">Race @i</option>
+                                    <option value="@i">Race @i</option>
                         }
                     }
                 }
             </select>
+            <div class="form-check">
+                <input type="checkbox" asp-for="IsChecked" class="form-check" id="isChecked">
+                <label class="form-check-label" for="isChecked">Check me, if you want to provide data for models.</label>
+                <button type="submit" class="btn btn-primary mt-1">Show Qualification table</button>
+            </div>
+            
+        </form>
+        <form method="post" asp-page-handler="GetRaceData">
+            <input type="hidden" asp-for="SelectedSeasonNumber" />
+            <input type="hidden" asp-for="SelectedRaceNumber" />
+            <input type="hidden" asp-for="IsChecked" class="form-check" id="isChecked"/>
+            <input type="hidden" asp-for="QualiDataList" id="QualiDataListInput" name="QualiDataListJson" />
             @if (Model.IsLoadedData)
             {
                 <button type="submit" class="btn btn-primary mt-2">Get Race Data</button>
             }
         </form>
-        <form method="post" asp-page-handler="OnPostGetQualificationFormAsync">
-            <div class="form-check">
-                <input type="checkbox" asp-for="IsChecked" class="form-check" id="isChecked">
-                <label class="form-check-label" for="isChecked">Check me, if you want to provide data for models.</label>
-            </div>
-        </form>
-        @if (Model.IsChecked == true)
+        @if (Model.IsChecked)
         {
             <div id="drivers-list">
-                <table class="table">
+                <table class="table" id="qualiTable">
                     <thead>
                         <tr>
                             <th>Driver</th>
@@ -83,12 +89,12 @@
                         </tr>
                     </thead>
                     <tbody id="sortable-list">
-                        @foreach (var driver in Model.QualiResultsList)
+                        @foreach (var driver in Model.QualiDataList)
                         {
                             <tr class="sortable-item" data-driver="@driver.driver">
                                 <td>@driver.driver</td>
                                 <td>@driver.team</td>
-                                <td>@driver.position_quali</td>
+                                <td class="position-quali">@driver.position_quali</td>
                             </tr>
                         }
                     </tbody>
@@ -144,6 +150,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
     <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.5.1.js"></script>
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
         <script>
             $(document).ready(function () {
                 var constructor_colors = {
@@ -163,7 +170,16 @@
                 $('#raceTable').DataTable({
                     "order": [[1, "asc"]],
                     "createdRow": function (row, data, dataIndex) {
-                        var team = data[1]; 
+                        var team = data[1];
+                        if (constructor_colors[team]) {
+                            $(row).css('background-color', constructor_colors[team]);
+                        }
+                    }
+                });
+                $('#qualiTable').DataTable({
+                    "order": [[1, "asc"]],
+                    "createdRow": function (row, data, dataIndex) {
+                        var team = data[1];
                         if (constructor_colors[team]) {
                             $(row).css('background-color', constructor_colors[team]);
                         }
@@ -185,17 +201,38 @@
                     raceNumberSelect.appendChild(option);
                 }
             }
-        </script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
-        <script>
             document.addEventListener("DOMContentLoaded", function () {
                 const sortable = new Sortable(document.getElementById('sortable-list'), {
                     animation: 150,
                     onEnd: function (evt) {
                         console.log("Order updated:", evt.oldIndex, "->", evt.newIndex);
+                        updateQualiPositions();
                     }
                 });
             });
+            function updateQualiPositions() {
+                const rows = document.querySelectorAll('#sortable-list .sortable-item');
+                const updatedData = [];
+
+                rows.forEach((row, index) => {
+                    // Update the displayed position in the table
+                    row.querySelector('.position-quali').textContent = index + 1;
+
+                    // Collect the updated data
+                    const driver = row.getAttribute('data-driver');
+                    const team = row.querySelector('td:nth-child(2)').textContent.trim();
+                    updatedData.push({
+                        driver: driver,
+                        team: team,
+                        position_quali: index + 1
+                    });
+                });
+
+                document.getElementById('QualiDataListInput').value = JSON.stringify(updatedData);
+            }
+
         </script>
+        
+        
 }
 </body>
