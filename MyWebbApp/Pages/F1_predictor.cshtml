@@ -71,7 +71,7 @@
             <input type="hidden" asp-for="SelectedSeasonNumber" />
             <input type="hidden" asp-for="SelectedRaceNumber" />
             <input type="hidden" asp-for="IsChecked" class="form-check" id="isChecked"/>
-            <input type="hidden" asp-for="QualiDataList" id="QualiDataListInput" name="QualiDataListJson" />
+            <input type="hidden" id="QualiDataListInput" name="QualiDataListJson" />
             @if (Model.IsLoadedData)
             {
                 <button type="submit" class="btn btn-primary mt-2">Get Race Data</button>
@@ -210,6 +210,7 @@
                     }
                 });
             });
+            
             function updateQualiPositions() {
                 const rows = document.querySelectorAll('#sortable-list .sortable-item');
                 const updatedData = [];
@@ -227,7 +228,7 @@
                         position_quali: index + 1
                     });
                 });
-
+                
                 document.getElementById('QualiDataListInput').value = JSON.stringify(updatedData);
             }
 

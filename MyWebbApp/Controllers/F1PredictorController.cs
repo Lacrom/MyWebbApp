@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Text;
 using System.Text.Json;
 
@@ -21,11 +22,11 @@ public class F1PredictorController : ControllerBase
     {
         if (QualiDataList == null || !QualiDataList.Any())
         {
-            Console.WriteLine("RaceDataList is empty or null!");
+            Console.WriteLine("QualiDataList is empty or null!");
         }
         else
         {
-            Console.WriteLine($"RaceDataList has {QualiDataList.Count} items.");
+            Console.WriteLine(string.Join("\t", QualiDataList.Select(RaceData => $"Temp official: {RaceData.Id}, {RaceData.Idcircuit}, {RaceData.IdCon}, {RaceData.driver}, {RaceData.team}")));
         }
 
         var requestPayload = new

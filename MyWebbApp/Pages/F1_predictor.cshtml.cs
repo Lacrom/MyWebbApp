@@ -27,6 +27,34 @@ namespace MyWebbApp.Pages
         [BindProperty]
         public string QualiDataListJson { get; set; } = string.Empty; // Initialize to an empty string
 
+        public Dictionary<int, string> DriverNames { get; set; } = new Dictionary<int, string>
+        {
+            { 1, "L.Hamilton" },
+            { 4, "F.Alonso" },
+            { 858, "L.Sargeant" },
+            { 857, "O.Piastri" },
+            { 856, "N.De Vries" },
+            { 855, "G.Zhou" },
+            { 852, "Y.Tsunoda" },
+            { 830, "M.Verstappen" },
+            { 815, "S.Perez" },
+            { 844, "C.Leclerc" },
+            { 832, "C.Sainz" },
+            { 840, "L.Stroll" },
+            { 846, "L.Norris" },
+            { 847, "G.Russell" },
+            { 839, "E.Ocon" },
+            { 842, "P.Gasly" },
+            { 822, "V.Bottas" },
+            { 807, "N.Hulkenberg" },
+            { 825, "K.Magnussen" },
+            { 848, "A.Albon" },
+            { 817, "D.Ricciardo" },
+            { 859, "L.Lawson" },
+            { 860, "F.Colapinto" },
+            { 861, "O.Bearman" }
+        };
+
         public F1PredictorModel(F1PredictorController f1PredictorController)
         {
             _f1PredictorController = f1PredictorController;
@@ -34,14 +62,51 @@ namespace MyWebbApp.Pages
 
         public async Task<IActionResult> OnPostGetRaceDataAsync()
         {
-            if (!string.IsNullOrEmpty(QualiDataListJson))
+            QualiDataList = new List<RaceData>();
+
+            if (TempData["QualiDataList"] is string qualiDataFromTempData)
             {
-                QualiDataList = JsonConvert.DeserializeObject<List<RaceData>>(QualiDataListJson) ?? new List<RaceData>();
+                var tempDataList = JsonConvert.DeserializeObject<List<RaceData>>(qualiDataFromTempData);
+                if (tempDataList != null)
+                {
+                    QualiDataList.AddRange(tempDataList);
+                }
             }
 
-            RaceDataList = await _f1PredictorController.GetRaceData(SelectedRaceNumber, SelectedSeasonNumber, IsChecked, QualiDataList ?? new List<RaceData>());
+            List<RaceData> updatedQualiData = new();
+            if (!string.IsNullOrEmpty(QualiDataListJson))
+            {
+                updatedQualiData = JsonConvert.DeserializeObject<List<RaceData>>(QualiDataListJson) ?? new List<RaceData>();
+            }
+
+            var updatedQualiDict = updatedQualiData.ToDictionary(r => r.driver , r => r.position_quali);
+            foreach (var raceData in QualiDataList)
+            {
+                if (updatedQualiDict.TryGetValue(raceData.driver, out int updatedPosition))
+                {
+                    raceData.position_quali = updatedPosition; 
+                }
+
+                if (DriverNames.TryGetValue(raceData.Id, out string driverName))
+                {
+                    raceData.driver = driverName;
+                }
+                else
+                {
+                    raceData.driver = "Unknown Driver"; 
+                }
+            }
+
+            RaceDataList = await _f1PredictorController.GetRaceData(
+                SelectedRaceNumber,
+                SelectedSeasonNumber,
+                IsChecked,
+                QualiDataList
+            );
+
             return Page();
         }
+
 
 
         public async Task<IActionResult> OnPostGetQualificationFormAsync()
@@ -49,6 +114,8 @@ namespace MyWebbApp.Pages
             // Handle the logic for getting qualification
             
             QualiDataList = await _f1PredictorController.GetDriversDataForm(SelectedRaceNumber, SelectedSeasonNumber);
+            TempData["QualiDataList"] = JsonConvert.SerializeObject(QualiDataList);
+            
             IsLoadedData = true;
             return Page();
         }
